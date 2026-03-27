@@ -1,0 +1,282 @@
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.transition-theme {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 标题栏布局优化 */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-text {
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+body.dark-mode .title-text {
+  color: #6ea8fe;
+}
+
+/* 主题切换小滑块样式 */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-icon-small {
+  font-size: 0.9rem;
+}
+
+.theme-switch {
+  display: inline-block;
+  height: 18px;
+  position: relative;
+  width: 34px;
+}
+
+.theme-switch input {
+  display: none;
+}
+
+.slider {
+  background-color: #ccc;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: .4s;
+}
+
+.slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 12px;
+  left: 3px;
+  position: absolute;
+  transition: .4s;
+  width: 12px;
+}
+
+input:checked + .slider {
+  background-color: #0d6efd;
+}
+
+input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* 深色主题样式 */
+body.dark-mode {
+  background-color: #1a1d20 !important;
+  color: #f8f9fa;
+}
+
+body.dark-mode .card {
+  background-color: #2b3035;
+  border-color: #495057;
+}
+
+body.dark-mode .mfa-item, 
+body.dark-mode .aksk-item {
+  background-color: #2b3035;
+  border-color: #495057;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+body.dark-mode .mfa-name,
+body.dark-mode .aksk-name {
+  color: #e9ecef;
+}
+
+body.dark-mode .nav-link {
+  color: #adb5bd;
+}
+
+body.dark-mode .nav-link.active {
+  color: #6ea8fe !important;
+  border-bottom-color: #6ea8fe !important;
+}
+
+body.dark-mode .form-control {
+  background-color: #343a40;
+  border-color: #495057;
+  color: #f8f9fa;
+}
+
+body.dark-mode .form-control::placeholder {
+  color: #6c757d;
+}
+
+body.dark-mode .alert-info {
+  background-color: #032830;
+  border-color: #084951;
+  color: #6edff6;
+}
+
+body.dark-mode .text-muted {
+  color: #adb5bd !important;
+}
+
+.nav-tabs {
+  border-bottom: none;
+}
+
+.nav-link {
+  border: none !important;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.nav-link.active {
+  color: #0d6efd !important;
+  background-color: transparent !important;
+  border-bottom: 2px solid #0d6efd !important;
+}
+
+/* MFA 列表项样式 */
+.mfa-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  margin-bottom: 8px;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.mfa-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.mfa-name {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.85rem;
+  /* 固定宽度并处理溢出 */
+  width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
+.mfa-code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #0d6efd;
+  letter-spacing: 1px;
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.mfa-code:hover {
+  text-decoration: underline;
+}
+
+.mfa-progress-container {
+  height: 3px;
+  width: 100%;
+  background-color: #eee;
+  margin-top: 8px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mfa-progress-bar {
+  height: 100%;
+  background-color: #0d6efd;
+  width: 0; /* 默认宽度设为 0，防止从 100% 缓慢缩回 */
+  transition: width 0.2s linear; /* 过渡时间缩短到 0.2 秒 */
+}
+
+/* 底部署名样式 */
+.footer {
+  padding-bottom: 1px;
+}
+
+.footer small {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: #adb5bd !important;
+}
+
+.opacity-10 {
+  opacity: 0.1;
+}
+
+/* AK/SK 列表项样式 */
+.aksk-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  margin-bottom: 8px;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.aksk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aksk-name {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.aksk-actions {
+  display: flex;
+  gap: 5px;
+}
+
+/* 复制成功时的反馈效果 */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.copy-feedback {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  z-index: 1000;
+  pointer-events: none;
+  animation: fadeOut 1.5s forwards;
+}
