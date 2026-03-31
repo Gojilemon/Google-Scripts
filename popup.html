@@ -32,6 +32,12 @@
       </li>
     </ul>
 
+    <div class="mb-3 d-flex gap-2">
+      <button id="export-yaml" class="btn btn-outline-secondary btn-sm flex-grow-1">备份 YAML</button>
+      <button id="import-backup" class="btn btn-outline-secondary btn-sm flex-grow-1">导入并合并</button>
+      <input type="file" id="import-file-input" class="d-none" accept=".yaml,.yml,text/yaml,text/x-yaml">
+    </div>
+
     <!-- Tab 内容区 -->
     <div class="tab-content" id="mainTabContent">
       <!-- MFA 页面 -->
@@ -96,6 +102,26 @@
     <div class="footer mt-2 text-center">
       <!-- <hr class="mb-2 opacity-10"> -->
       <small class="text-muted italic">任鹏宇:盐水儿@v1.0</small>
+    </div>
+  </div>
+
+  <div id="import-preview-modal" class="import-modal-backdrop d-none">
+    <div class="import-modal-card">
+      <h6 class="mb-2">导入预览</h6>
+      <div id="import-preview-summary" class="mb-2 small"></div>
+      <div id="import-preview-conflicts" class="mb-2 small"></div>
+      <div id="import-option-mfa-wrap" class="form-check mb-1 d-none">
+        <input class="form-check-input" type="checkbox" id="import-option-mfa" checked>
+        <label class="form-check-label small" for="import-option-mfa">MFA 冲突项覆盖同名</label>
+      </div>
+      <div id="import-option-aksk-wrap" class="form-check mb-2 d-none">
+        <input class="form-check-input" type="checkbox" id="import-option-aksk" checked>
+        <label class="form-check-label small" for="import-option-aksk">AK/SK 冲突项覆盖同名</label>
+      </div>
+      <div class="d-flex gap-2">
+        <button id="import-preview-cancel" class="btn btn-outline-secondary btn-sm flex-grow-1">取消</button>
+        <button id="import-preview-confirm" class="btn btn-primary btn-sm flex-grow-1">确认导入</button>
+      </div>
     </div>
   </div>
 
