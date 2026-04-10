@@ -51,8 +51,8 @@ npm run lint
 
 点击“后端连接”按钮后，系统会复制链接到剪贴板，规则如下：
 
-- 原路径：`https://a1nas.geesdev.com:4006/test1/weixintupian.jpg`
-- 复制结果：`https://a1nas.geesdev.com:4006/files/test1/weixintupian.jpg`
+- 原路径：`https://hhhhh.geesdev.com:4006/test1/weixintupian.jpg`
+- 复制结果：`https://hhhhh.geesdev.com:4006/files/test1/weixintupian.jpg`
 
 即：在域名后自动插入 `/files/`。
 
