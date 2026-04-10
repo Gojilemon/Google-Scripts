@@ -9,8 +9,12 @@ type ConnectionForm = {
   basePath: string
 }
 
+type DisplayEntry = FileStat & {
+  clientPath: string
+}
+
 const initialForm: ConnectionForm = {
-  remoteURL: 'http://127.0.0.1:5005/',
+  remoteURL: 'https://a1nas.geesdev.com:4006',
   username: 'a1',
   password: '',
   basePath: '/',
@@ -84,9 +88,9 @@ function App() {
   const [isDraggingUpload, setIsDraggingUpload] = useState(false)
   const [isDraggingDownload, setIsDraggingDownload] = useState(false)
   const [currentPath, setCurrentPath] = useState('/')
-  const [entries, setEntries] = useState<FileStat[]>([])
+  const [entries, setEntries] = useState<DisplayEntry[]>([])
   const [message, setMessage] = useState('请输入 NAS WebDAV 地址并连接。')
-  const [draggingEntry, setDraggingEntry] = useState<FileStat | null>(null)
+  const [draggingEntry, setDraggingEntry] = useState<DisplayEntry | null>(null)
 
   const rootPath = useMemo(() => normalizePath(form.basePath || '/'), [form.basePath])
   const breadcrumbs = useMemo(() => {
@@ -114,7 +118,7 @@ function App() {
       const raw = error instanceof Error ? error.message : '未知错误'
       if (/failed to fetch|networkerror|cors|certificate|ssl/i.test(raw)) {
         setMessage(
-          `请求失败：${raw}。请确认 NAS 开启 CORS 且允许来源 http://localhost:5173，并检查证书是否受浏览器信任。`,
+          `请求失败：${raw}。请确认 NAS 开启 CORS 且允许来源 ${window.location.origin}，并检查证书是否受浏览器信任。`,
         )
       } else if (/401|403|unauthorized|forbidden/i.test(raw)) {
         setMessage(`鉴权失败：${raw}。请确认用户名/密码和 WebDAV 权限。`)
@@ -139,6 +143,7 @@ function App() {
       .map((entry) => ({
         ...entry,
         basename: inferDisplayName(entry),
+        clientPath: joinPath(normalized, inferDisplayName(entry)),
       }))
       .filter((entry) => normalizePath(entry.filename) !== normalized)
     const sorted = [...cleaned].sort((left, right) => {
@@ -195,12 +200,12 @@ function App() {
     })
   }
 
-  const downloadFile = async (entry: FileStat) => {
+  const downloadFile = async (entry: DisplayEntry) => {
     if (!clientRef.current || entry.type !== 'file') {
       return
     }
     await safeAction(async () => {
-      const binary = await clientRef.current?.getFileContents(entry.filename, { format: 'binary' })
+      const binary = await clientRef.current?.getFileContents(entry.clientPath, { format: 'binary' })
       const blob =
         binary instanceof Blob
           ? binary
@@ -215,7 +220,7 @@ function App() {
     })
   }
 
-  const deleteEntry = async (entry: FileStat) => {
+  const deleteEntry = async (entry: DisplayEntry) => {
     if (!clientRef.current) {
       return
     }
@@ -224,16 +229,16 @@ function App() {
     }
     await safeAction(async () => {
       if (entry.type === 'directory') {
-        await clientRef.current?.deleteFile(entry.filename)
+        await clientRef.current?.deleteFile(entry.clientPath)
       } else {
-        await clientRef.current?.deleteFile(entry.filename)
+        await clientRef.current?.deleteFile(entry.clientPath)
       }
       await loadDirectory(currentPath)
       setMessage(`已删除：${entry.basename}`)
     })
   }
 
-  const renameEntry = async (entry: FileStat) => {
+  const renameEntry = async (entry: DisplayEntry) => {
     if (!clientRef.current) {
       return
     }
@@ -243,13 +248,13 @@ function App() {
     }
     await safeAction(async () => {
       const nextPath = joinPath(currentPath, nextName)
-      await clientRef.current?.moveFile(entry.filename, nextPath)
+      await clientRef.current?.moveFile(entry.clientPath, nextPath)
       await loadDirectory(currentPath)
       setMessage(`已重命名为：${nextName}`)
     })
   }
 
-  const copyEntry = async (entry: FileStat) => {
+  const copyEntry = async (entry: DisplayEntry) => {
     if (!clientRef.current) {
       return
     }
@@ -261,7 +266,7 @@ function App() {
     }
     await safeAction(async () => {
       const nextPath = joinPath(currentPath, nextName)
-      await clientRef.current?.copyFile(entry.filename, nextPath)
+      await clientRef.current?.copyFile(entry.clientPath, nextPath)
       await loadDirectory(currentPath)
       setMessage(`已复制：${nextName}`)
     })
@@ -280,6 +285,46 @@ function App() {
       await loadDirectory(currentPath)
       setMessage(`已新建目录：${name}`)
     })
+  }
+
+  const copyBackendLink = async (targetPath: string) => {
+    const remoteURL = form.remoteURL.trim()
+    if (!remoteURL) {
+      setMessage('请先填写 WebDAV 地址。')
+      return
+    }
+    try {
+      const url = new URL(remoteURL)
+      const normalized = normalizePath(targetPath)
+      const segments =
+        normalized === '/'
+          ? []
+          : normalized
+              .slice(1)
+              .split('/')
+              .filter(Boolean)
+              .map((segment) => encodeURIComponent(segment))
+      url.pathname = `/files/${segments.join('/')}`
+      url.search = ''
+      url.hash = ''
+      const link = url.toString()
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(link)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = link
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.focus()
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setMessage(`已复制后端链接：${link}`)
+    } catch {
+      setMessage('WebDAV 地址格式无效，无法复制后端链接。')
+    }
   }
 
   return (
@@ -303,7 +348,7 @@ function App() {
               onChange={(event) => {
                 setForm((previous) => ({ ...previous, remoteURL: event.target.value }))
               }}
-              placeholder="http://127.0.0.1:5005/ 或 https://nas.example.com:5006"
+              placeholder="https://a1nas.geesdev.com:4006"
             />
           </label>
           <label>
@@ -365,6 +410,9 @@ function App() {
             >
               上传文件
             </button>
+            <button onClick={() => void copyBackendLink(currentPath)} disabled={!form.remoteURL.trim()}>
+              后端连接
+            </button>
             <input
               ref={fileInputRef}
               type="file"
@@ -415,7 +463,7 @@ function App() {
               <tbody>
                 {entries.map((entry) => (
                   <tr
-                    key={entry.filename}
+                    key={entry.clientPath}
                     draggable={entry.type === 'file'}
                     onDragStart={() => setDraggingEntry(entry)}
                     onDragEnd={() => setDraggingEntry(null)}
@@ -424,12 +472,12 @@ function App() {
                       {entry.type === 'directory' ? (
                         <button
                           className="link-btn"
-                          onClick={() => void safeAction(async () => loadDirectory(entry.filename))}
+                          onClick={() => void safeAction(async () => loadDirectory(entry.clientPath))}
                         >
                           📁 {entry.basename}
                         </button>
                       ) : (
-                        <span>📄 {getBaseName(entry.filename)}</span>
+                        <span>📄 {entry.basename}</span>
                       )}
                     </td>
                     <td>{entry.type === 'directory' ? '目录' : '文件'}</td>
@@ -440,6 +488,7 @@ function App() {
                         {entry.type === 'file' && (
                           <button onClick={() => void downloadFile(entry)}>下载</button>
                         )}
+                        <button onClick={() => void copyBackendLink(entry.clientPath)}>后端连接</button>
                         <button onClick={() => void renameEntry(entry)}>重命名</button>
                         <button onClick={() => void copyEntry(entry)}>复制</button>
                         <button className="danger" onClick={() => void deleteEntry(entry)}>

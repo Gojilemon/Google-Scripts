@@ -1,73 +1,64 @@
-# React + TypeScript + Vite
+# WebDAV NAS 文件管理台
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+基于 React + TypeScript + Vite 的前端文件管理工具，用于通过 WebDAV 协议访问 NAS 文件。
 
-Currently, two official plugins are available:
+## 功能特性
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- WebDAV 连接：支持地址、用户名、密码、根路径配置
+- 文件浏览：目录列表、面包屑导航、返回上级
+- 文件操作：上传、下载、重命名、复制、删除、新建目录
+- 拖拽交互：拖拽上传、本地触发下载
+- 后端链接复制：一键复制 `/files/` 访问链接
 
-## React Compiler
+## 环境要求
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 18+
+- npm 9+
 
-## Expanding the ESLint configuration
+## 安装与启动
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+默认开发地址：
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `http://localhost:5173/`
+- 若 5173 端口占用，Vite 会自动切换到其他端口
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 生产构建
+
+```bash
+npm run build
 ```
+
+## 代码检查
+
+```bash
+npm run lint
+```
+
+## 默认连接配置
+
+当前默认值位于 `src/App.tsx`：
+
+- WebDAV 地址：`自定义`
+- 用户名：`自定义`
+- 根路径：`/` 或 `/其它/`
+
+## “后端连接”复制规则
+
+点击“后端连接”按钮后，系统会复制链接到剪贴板，规则如下：
+
+- 原路径：`https://a1nas.geesdev.com:4006/test1/weixintupian.jpg`
+- 复制结果：`https://a1nas.geesdev.com:4006/files/test1/weixintupian.jpg`
+
+即：在域名后自动插入 `/files/`。
+
+## Nginx 注意事项
+
+- `proxy_pass` 不要使用反引号
+- 需要正确处理 CORS 预检 `OPTIONS`
+- 建议对 `PROPFIND/MKCOL/COPY/MOVE/LOCK/UNLOCK` 等方法放行
+- 若使用 HTTPS，请确保证书对浏览器可信
