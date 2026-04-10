@@ -1,0 +1,45 @@
+:root {
+  --bg-page: linear-gradient(160deg, #eef2ff 0%, #f7f9fc 40%, #f1f5f9 100%);
+  --text-main: #1d2433;
+  --text-muted: #5d6474;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: #d8ddea;
+  --control-bg: #ffffff;
+  --control-border: #ccd4e6;
+  --control-hover: #8799ff;
+  --drop-bg: #f8faff;
+  --thead-bg: #f3f6ff;
+  --row-hover: #f8faff;
+  --shadow: 0 18px 40px rgba(37, 56, 88, 0.08);
+  color: var(--text-main);
+  font-family:
+    'Inter',
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+#root {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
