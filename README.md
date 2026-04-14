@@ -62,3 +62,9 @@ npm run lint
 - 需要正确处理 CORS 预检 `OPTIONS`
 - 建议对 `PROPFIND/MKCOL/COPY/MOVE/LOCK/UNLOCK` 等方法放行
 - 若使用 HTTPS，请确保证书对浏览器可信
+
+# 启动命令
+```bash
+npm run dev
+npm run dev -- --host 0.0.0.0 --port 5173
+```
